@@ -17,10 +17,10 @@
 
 | Role | Name | GitHub Handle | Discord Handle
 | :--- | :--- | :--- | :--- |
-| **Project Lead** (Architect) | [Name] | [@handle] | [@handle] |
-| **GPU Acceleration PIC** (Builder) | [Name] | [@handle] | [@handle] |
-| **Quality Assurance PIC** (Verifier) | [Name] | [@handle] | [@handle] |
-| **Technical Marketing PIC** (Storyteller) | [Name] | [@handle] | [@handle] |
+| **Project Lead** (Architect) | [zakia] | [@zeko-1] | [@zeko.005] |
+| **GPU Acceleration PIC** (Builder) | [zakia] | [@zeko-1] | [@zeko.005] |
+| **Quality Assurance PIC** (Verifier) | [zakia] | [@zeko-1] | [@zeko.005] |
+| **Technical Marketing PIC** (Storyteller) | [zakia] | [@zeko-1] | [@zeko.005] |
 
 ---
 
@@ -42,6 +42,16 @@
 * **Relevance:** [How does this paper support your plan?]
     * *Example:* "Reference: 'QAOA for MaxCut.' Relevance: Although LABS is different from MaxCut, this paper demonstrates how parameter concentration can speed up optimization, which we hope to replicate."
 
+ __________________________
+ • Algorithm: Quantum Approximate Optimization Algorithm (QAOA).
+ 
+• Motivation: We chose QAOA because it is specifically designed for combinatorial optimization problems like LABS. It allows us to map the sequence energy to a Hamiltonian that can be solved on a quantum simulator.
+
+• Literature Review:
+• Reference: "QAOA for MaxCut" by Farhi et al.
+• Relevance: It provides the foundational framework for encoding binary problems into quantum circuits.
+      
+
 ---
 
 ## 3. The Acceleration Strategy
@@ -59,6 +69,16 @@
 ### Hardware Targets
 * **Dev Environment:** [e.g., Qbraid (CPU) for logic, Brev L4 for initial GPU testing]
 * **Production Environment:** [e.g., Brev A100-80GB for final N=50 benchmarks]
+_____
+The Acceleration Strategy:
+
+• Quantum Acceleration (CUDA-Q): We will use the nvidia backend in CUDA-Q to offload circuit simulations to the GPU, which significantly reduces the time for state-vector evolution.
+
+• Classical Acceleration (MTS): We will use CuPy to parallelize the evaluation of neighbor sequences in the Multi-Target Search, allowing us to check thousands of configurations per second.
+
+• Hardware Targets:
+• Dev Environment: Qbraid (CPU) for initial logic.
+• Production Environment: NVIDIA L4 or A100 for high-N sequence benchmarking.
 
 ---
 
@@ -75,6 +95,17 @@
     * *Example:* "LABS sequence $S$ and its negation $-S$ must have identical energies. We will assert `energy(S) == energy(-S)`."
 * **Check 2 (Ground Truth):**
     * *Example:* "For $N=3$, the known optimal energy is 1.0. Our test suite will assert that our GPU kernel returns exactly 1.0 for the sequence `[1, 1, -1]`."
+ 
+______
+The Verification Plan:
+
+• Unit Testing Strategy: We will use the pytest framework.
+
+• Core Correctness Checks:
+
+• Check 1 (Symmetry): We will verify that a sequence and its inverse return the same energy value.
+
+• Check 2 (Ground Truth): We will test against N=3 where the optimal energy is known to be 1.0.
 
 ---
 
@@ -94,6 +125,22 @@
 * **Plot 1:** [e.g., "Time-to-Solution vs. Problem Size (N)" comparing CPU vs. GPU]
 * **Plot 2:** [e.g., "Convergence Rate" (Energy vs. Iteration count) for the Quantum Seed vs. Random Seed]
 
+_____
+Execution Strategy & Success Metrics:
+
+• Agentic Workflow: We use Cursor as our primary IDE. We've fed the CUDA-Q documentation into the local context to ensure the AI generates valid quantum kernels.
+
+• Success Metrics:
+• Metric 1: Achieving a 10x speedup over the baseline CPU implementation.
+
+• Metric 2: Successfully finding optimal energies for N=30.
+
+Visualization Plan:
+
+• Plot 1 (Efficiency): "Time-to-Solution vs. Problem Size (N)". A line graph comparing the execution time on a standard CPU versus the accelerated NVIDIA GPU (CUDA-Q) to demonstrate the exponential speedup.
+
+• Plot 2 (Accuracy): "Energy Convergence Rate". A plot showing how the Energy value decreases over iterations, comparing a 'Quantum Seed' (QAOA) against a 'Random Seed' to prove the quantum advantage in finding lower energy states faster.
+
 ---
 
 ## 6. Resource Management Plan
@@ -102,3 +149,7 @@
 * **Plan:** [How will you avoid burning all your credits?]
     * *Example:* "We will develop entirely on Qbraid (CPU) until the unit tests pass. We will then spin up a cheap L4 instance on Brev for porting. We will only spin up the expensive A100 instance for the final 2 hours of benchmarking."
     * *Example:* "The GPU Acceleration PIC is responsible for manually shutting down the Brev instance whenever the team takes a meal break."
+_____
+Resource Management Plan:
+
+• Plan: To save credits, we will perform 90% of our debugging on CPU-based simulators. We will only activate the GPU instances (Brev/NVIDIA) for final performance runs and large-scale simulations.
